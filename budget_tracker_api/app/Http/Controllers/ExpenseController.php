@@ -45,15 +45,21 @@ class ExpenseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Expense $gasto)
+    public function show($id)
     {
-        //
+        $expense = Expense::find($id);
+
+        if (!$expense) {
+            return response()->json(['message' => 'Expense not found'], 404);
+        }
+
+        return response()->json($expense);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Expense $gasto)
+    public function edit(Expense $expense)
     {
         //
     }
@@ -61,16 +67,55 @@ class ExpenseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Expense $gasto)
+    public function update(Request $request, $id)
     {
-        //
+        $expense = Expense::find($id);
+
+        if (!$expense) {
+            return response()->json(['message' => 'Expense not found'], 404);
+        }
+
+        $request->validate([
+            'description' => 'required|string',
+            'category' => 'required|string',
+            'amount' => 'required|numeric',
+            'date' => 'required|date',
+        ]);
+
+        $expense->update($request->all());
+
+        return response()->json($expense);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Expense $gasto)
+    public function destroy($id)
     {
-        //
+        $expense = Expense::find($id);
+
+        if (!$expense) {
+            return response()->json(['message' => 'Expense not found'], 404);
+        }
+
+        $expense->delete();
+
+        return response()->json(['message' => 'Expense deleted successfully']);
+    }
+
+    public function getTotal()
+    {
+        $total = Expense::sum('amount');
+
+        return response()->json([
+            'total' => $total
+        ]);
+    }
+
+    public function getSorted()
+    {
+        $expenses = Expense::orderBy('date', 'desc')->get();
+
+        return response()->json($expenses);
     }
 }
