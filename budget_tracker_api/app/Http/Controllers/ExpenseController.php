@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Expense;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
@@ -36,7 +37,10 @@ class ExpenseController extends Controller
             'date' => 'required|date',
         ]);
 
-        $expense = Expense::create($validated);
+        $expense = Expense::create([
+            ...$validated,
+            'user_id' => Auth::guard('api')->id(),
+        ]);
 
         return response()->json($expense, 201);
     }
@@ -114,6 +118,17 @@ class ExpenseController extends Controller
     public function getSorted()
     {
         $expenses = Expense::orderBy('date', 'desc')->get();
+
+        return response()->json($expenses);
+    }
+
+    public function myExpenses()
+    {
+        $user = Auth::guard('api')->user();
+
+        $expenses = Expense::where('user_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->get();
 
         return response()->json($expenses);
     }
