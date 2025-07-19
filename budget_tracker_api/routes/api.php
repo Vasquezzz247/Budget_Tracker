@@ -33,6 +33,9 @@ Route::get('/expenses/total', [ExpenseController::class, 'getTotal']);
 //sort expenses by date
 Route::get('/expenses/sorted', [ExpenseController::class, 'getSorted']);
 
+//get expenses from user, route is protected
+Route::middleware('auth:api')->get('/expenses/my', [ExpenseController::class, 'myExpenses']);
+
 //get expense by id
 Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
 
