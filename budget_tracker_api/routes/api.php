@@ -3,7 +3,24 @@
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\AuthController;
 
+/**
+ * Jwt Routes.
+ */
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+
+    Route::middleware('auth:api')->group(function () {
+        Route::get('me', [AuthController::class, 'me']);
+        Route::post('logout', [AuthController::class, 'logout']);
+    });
+});
+
+/**
+ * Basic routes
+ */
 //get all
 Route::get('/expenses', [ExpenseController::class, 'index']);
 
@@ -19,7 +36,7 @@ Route::get('/expenses/sorted', [ExpenseController::class, 'getSorted']);
 //get expense by id
 Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
 
-//uptdate expense
+//update expense
 Route::put('/expenses/{id}', [ExpenseController::class, 'update']);
 
 //delete expense
