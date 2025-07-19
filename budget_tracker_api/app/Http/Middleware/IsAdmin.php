@@ -15,6 +15,12 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $user = Auth::guard('api')->user();
+
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized. Admins only.'], 403);
+        }
+
         return $next($request);
     }
 }
