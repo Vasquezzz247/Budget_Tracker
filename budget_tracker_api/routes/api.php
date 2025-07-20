@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 /**
  * Jwt Routes.
@@ -17,6 +18,8 @@ Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });
+
+Route::middleware(['auth:api', 'admin'])->get('/users', [UserController::class, 'index']);
 
 /**
  * Basic routes
